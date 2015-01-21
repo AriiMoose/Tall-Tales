@@ -8,30 +8,33 @@ __status__ = 'Development'
 
 #!/usr/bin/env python
 import abc
+import pygame
 
 class Scene:
 
-    # Used to catch unimplemented abstract methods at instantiation
+    # Catches undefined abstract methods during object creation
     __metaclass__ = abc.ABCMeta
 
+    sceneSystems = []
+    sceneEntities = []
+    gameView = 0
+
     def __init__(self, game, sceneName):
-        """ When a scene is created a dictionary reference to it is created in the game engine (Game.py)
+        """
+        """
+
+    def initialise(self, game):
+        """ Adds an instance of the game engine to the scene's view
 
         Args:
             game: Reference to the instance of the game engine (Game.py)
-            sceneName: String to identify the scene
         """
 
         try:
-            game.sceneList[sceneName] = {self}
+            self.gameView = game
 
         except ValueError:
             print "Could not add scene to game view"
-
-    def initialise(self, game, sceneName):
-        """
-
-        """
 
     def add_systems(self, systems=[], *args):
         """ Adds systems to the scene
@@ -60,7 +63,8 @@ class Scene:
             except ValueError:
                 print "Could not add entity" + x
 
-    def update(self):
+    @classmethod
+    def update(cls):
         """ Propagates the update loop for each of its systems
             Calls checkTransition
 
@@ -68,14 +72,25 @@ class Scene:
             None
         """
 
-        for x in self.sceneSystems:
-            self.sceneSystems.update()
+        for x in cls.sceneSystems:
+            cls.sceneSystems.update()
 
-        self.check_transition()
+        cls.events = pygame.event.get()
 
-    
-    def check_transition(self):
+        # Checks for events occurring within the scene and responds to them
+        for event in cls.events:
+            print "checking events"
+            if event.type == pygame.QUIT:
+                print "QUIT event received"
+                cls.gameView.running = False
+
+        cls.check_transition()
+
+    @classmethod
+    def check_transition(cls):
         """ Checks conditions for a scene transition
+            Abstract method
+            Conditions for transition must be defined by the developer
 
         Args:
             None
@@ -84,4 +99,5 @@ class Scene:
     def draw(self):
         """
 
+        :return:
         """

@@ -8,9 +8,11 @@ __status__ = 'Development'
 
 #!/usr/bin/env python
 from Engine.Game import Game
+from Scenes import firstScene
 
 class Test:
-     game = Game('Test Game', 150, 50)
+        game = Game('Test Game', 150, 50)
 
-     print "Running game"
-     game.run()
+        game.set_active_scene(firstScene.SceneOne)
+        print "Running game"
+        game.run()

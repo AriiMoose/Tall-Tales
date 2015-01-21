@@ -17,8 +17,9 @@ __status__ = 'Development'
 
 #!/usr/bin/env python
 import pygame
-from pygame.locals import *
+import Scene
 import sys
+from TestGame.Scenes import firstScene
 
 class Game:
 
@@ -30,6 +31,7 @@ class Game:
             game_name: Name of the game being created
             screen_width: Width of the game screen
             screen_height: Height of the game screen
+            initialScene: The first scene to be activated in the game
         """
 
         pygame.init()
@@ -63,6 +65,9 @@ class Game:
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
+        # Set the base scene's game view to this instance of the game engine
+        Scene.Scene.gameView = self
+
     def run(self):
 
         """ Runs the game. Calls update and draw methods
@@ -82,6 +87,7 @@ class Game:
 
         Args:
             scene: The scene which is to be made active"""
+        print "Setting active scene..."
         self.activeScene = scene
         self.isActive = True
         self.activeScene.draw()
@@ -97,9 +103,6 @@ class Game:
             None
 
         """
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
 
         if self.isActive:
             self.activeScene.update()
