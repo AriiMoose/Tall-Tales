@@ -6,9 +6,19 @@ __maintainer__ = 'Andrew Tully'
 __email__ = 'ariimoose@gmail.com'
 __status__ = 'Development'
 
+""" Desc:   This class defines a scene object. Scenes manage their own event loops and
+            contain a list of systems and entities which belong to them
+
+    Usage:  Subclass the scene to create a new scene
+            In the subclass override the check_transition() method to define the parameters for transitioning between scenes
+            Call the add_systems() and add_entities() methods to initialise the relative lists
+
+"""
+
 #!/usr/bin/env python
 import abc
 import pygame
+from Engine.Systems.TextSystem import TextSystem
 
 class Scene:
 
@@ -17,51 +27,51 @@ class Scene:
 
     sceneSystems = []
     sceneEntities = []
-    gameView = 0
 
-    def __init__(self, game, sceneName):
+    def __init__(self):
         """
         """
 
-    def initialise(self, game):
+    def initialise(cls):
         """ Adds an instance of the game engine to the scene's view
 
         Args:
             game: Reference to the instance of the game engine (Game.py)
         """
 
-        try:
-            self.gameView = game
-
-        except ValueError:
-            print "Could not add scene to game view"
-
-    def add_systems(self, systems=[], *args):
+    @classmethod
+    def add_systems(cls, systems=[], *args):
         """ Adds systems to the scene
 
         Args:
             systems: List of systems to add to the scene
         """
-        for x in systems:
-            try:
-                self.sceneSystems.append(systems[x])
+        try:
+            cls.sceneSystems = systems
+        except ValueError:
+            print "Could not add system"
 
-            except ValueError:
-                print "Could not add system" + x
-
-    def add_entities(self, entities=[], *args):
-        """ Adds entities to the scene
+    @classmethod
+    def add_initial_entities(cls, entities=[], *args):
+        """ Adds entities to the scene on scene initialisation
 
         Args:
             entities: List of entities to add to the scene
         """
 
-        for x in entities:
-            try:
-                self.sceneEntities.append(entities[x])
+        try:
+            cls.sceneEntities = entities
 
-            except ValueError:
-                print "Could not add entity" + x
+        except ValueError:
+            print "Could not add entity"
+
+    @classmethod
+    def add_entities(cls, *args):
+        try:
+            cls.sceneEntities = cls.sceneEntities.extend(args)
+
+        except ValueError:
+            print "Could not add entity"
 
     @classmethod
     def update(cls):
@@ -73,13 +83,12 @@ class Scene:
         """
 
         for x in cls.sceneSystems:
-            cls.sceneSystems.update()
+            x.update()
 
         cls.events = pygame.event.get()
 
         # Checks for events occurring within the scene and responds to them
         for event in cls.events:
-            print "checking events"
             if event.type == pygame.QUIT:
                 print "QUIT event received"
                 cls.gameView.running = False

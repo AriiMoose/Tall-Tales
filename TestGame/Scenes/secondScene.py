@@ -8,6 +8,10 @@ import TestGame.Scenes.firstScene
 class SceneTwo(Scene):
 
     @classmethod
+    def initialise(self):
+        pass
+
+    @classmethod
     def check_transition(cls):
 
         for event in cls.events:
@@ -15,6 +19,8 @@ class SceneTwo(Scene):
                 print "KEYDOWN_RIGHT event received"
                 cls.gameView.set_active_scene(TestGame.Scenes.firstScene.SceneOne)
 
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                print "" + cls.sceneSystems.__str__()
     @classmethod
     def draw(cls):
         # Fill Background

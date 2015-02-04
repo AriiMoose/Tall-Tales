@@ -19,7 +19,6 @@ __status__ = 'Development'
 import pygame
 import Scene
 import sys
-from TestGame.Scenes import firstScene
 
 class Game:
 
@@ -90,6 +89,7 @@ class Game:
         print "Setting active scene..."
         self.activeScene = scene
         self.isActive = True
+        self.activeScene.initialise()
         self.activeScene.draw()
         print "Scene changed"
 
