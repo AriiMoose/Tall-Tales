@@ -1,13 +1,13 @@
 __author__ = 'Andrew'
 
-#!/usr/bin/env Python
-
 from Engine.Scene import *
 import TestGame.Scenes.secondScene
 from Engine.Systems.TextSystem import TextSystem
 from Engine.Components.TextComponent import TextComponent
 from TestGame.Entities.TestEntity import TestEntity
-
+import Engine.eztext
+import Engine.InputBox
+import 
 class SceneOne(Scene):
 
     @classmethod
@@ -44,6 +44,13 @@ class SceneOne(Scene):
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 cls.add_entities(cls.testEnt2)
+
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                cls.answer = Engine.InputBox.ask(cls.gameView.screen, "Input")
+                print "Answer: " + cls.answer
+                cls.testSystem.get_pos(cls.answer)
+
+        pygame.display.flip()
 
     @classmethod
     def draw(cls):

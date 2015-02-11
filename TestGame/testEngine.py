@@ -11,7 +11,7 @@ from Engine.Game import Game
 from Scenes import firstScene
 
 class Test:
-        game = Game('Test Game', 150, 50)
+        game = Game('Test Game', 500, 500)
 
         game.set_active_scene(firstScene.SceneOne)
         print "Running game"

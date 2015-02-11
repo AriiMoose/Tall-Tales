@@ -15,7 +15,6 @@ __status__ = 'Development'
 
 """
 
-#!/usr/bin/env python
 import abc
 import pygame
 from Engine.Systems.TextSystem import TextSystem
