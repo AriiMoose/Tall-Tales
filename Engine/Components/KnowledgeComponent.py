@@ -11,4 +11,8 @@ class KnowledgeComponent(Component):
 
     def __init__(self):
         self.type = "knowledge"
-        self.kb_dict = []
+        self.kfb_dict = {}
+        self.krb_dict = {}
+        self.kb = None
+        self.current_rule = None
+        self.eval_result = None

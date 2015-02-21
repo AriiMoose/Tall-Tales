@@ -13,28 +13,32 @@ __status__ = 'Development'
 
 """
 from Engine.System import System
-from Pyke import knowledge_engine
+from pyke import knowledge_engine
 
 class KnowledgeSystem(System):
 
-    def __init__(self):
+    def __init__(self, loc):
         """ Instantiates a new instance of the knowledge engine
-            Loads all knowledge bases being used by the engine
+
+        Args:
+            loc: The directory which the knowledge bases to be loaded are located
+                A package or directory may be passed
         """
-        self.engine = knowledge_engine.engine(__file__)
+        self.engine = knowledge_engine.engine(loc)
 
     def create_kb(self):
         pass
 
-    def add_kb(self, entity, kb):
+    def add_kb(self, entity, kb_name, kb):
         """ Adds a knowledge base to an entity by appending it to the Knowledge Component
 
         Args:
             entity: The entity receiving the knowledge base
-            kb: The name of the knowledge base
+            kb_name: The key for the knowledge base being added
+            kb: The knowledge base being added
         """
         if self.entityList.__contains__(entity):
-            entity.KnowledgeComponent.kb_list.append(kb)
+            entity.KnowledgeComponent.kb_dict[kb_name] = kb
 
         else:
             print "Entity does not contain a Knowledge Component"
@@ -59,7 +63,14 @@ class KnowledgeSystem(System):
     def add_rule(self):
         pass
 
-    def evaluate(self, kb, rule, actor="I", subject=""):
+    def update(self):
+
+        # Update each entity based on it's priority
+        for key in sorted(self.entityList):
+            if(key.current_rule is not None):
+                key.eval_result = self.evaluate(key.kb, key.current_rule)
+
+    def evaluate(self, kb, rule, subject):
         """ Evaluates a rule or fact in the knowledge base
 
         Args:
@@ -71,5 +82,6 @@ class KnowledgeSystem(System):
 
         # Construct argument string for testing the rule
         self.arg_string = kb + "." + rule
-
-        return self.engine.prove_1_goal(self.arg_string, '(actor, subject)')
+        print(self.arg_string)
+        print(subject)
+        print(self.engine.prove_1_goal(self.arg_string + "(" + subject + ")"))

@@ -18,6 +18,8 @@ class TextComponent(Component):
 
     def __init__(self):
         self.type = "text"
-        self.input_string = ""
-        self.output_string = ""
+        self.input_string = None
+        self.output_string = None
+        self.action = None
         self.pos_tags = []
+        self.frame_params = []

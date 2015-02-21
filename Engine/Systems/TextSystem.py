@@ -16,6 +16,7 @@ __status__ = 'Development'
 from Engine.System import System
 import nltk
 from nltk.corpus import brown
+from nltk.corpus import framenet as fn
 import re
 
 class TextSystem(System):
@@ -36,7 +37,7 @@ class TextSystem(System):
 
         # Setup multiple backup taggers
         print "Creating taggers..."
-        self.default_tagger = nltk.DefaultTagger('VB')
+        self.default_tagger = nltk.DefaultTagger('NN')
         self.uni_tagger = nltk.UnigramTagger(self.train_sents, backoff=self.default_tagger)
         self.bi_tagger = nltk.BigramTagger(self.train_sents, backoff=self.uni_tagger)
         self.tri_tagger = nltk.TrigramTagger(self.train_sents, backoff=self.bi_tagger)
@@ -47,9 +48,8 @@ class TextSystem(System):
         """
         """
         #self.access_components()
-        #self.tagged_string = self.get_pos("Open the door")
+        #self.tagged_string = self.get_pos("I open the door")
         #self.interperate(self.tagged_string)
-
 
     def access_components(self):
         # Access the strings within an entity's text component
@@ -87,34 +87,73 @@ class TextSystem(System):
             Checks the tag for each token until it finds a verb
             Assumes the first verb in the sentence is the operative verb
             Finds the subject of the verb by finding the first noun following the operative verb
+            If there is no verb found, then it is assumed that the first or second word is a verb
 
         Args:
             input_tokens: Tagged tokens to be analysed
         """
-
+        # Regular expression to match with verbs (VB), nouns (NN), and personal prepositions (PPSS)
         reg_verb = re.compile(r'VB')
         reg_noun = re.compile(r'NN')
+        reg_prep = re.compile(r'PPSS')
+
         self.i = 0
         self.operative_verb = None
         self.target_noun = None
 
         # Check for operative verb
+        # If the tag of the token tuple matches with the appropriate regex then record it
         for token in input_tokens:
             if reg_verb.search(token[1]) is not None:
                 print "Matched verb token: " + token.__str__()
-                self.operative_verb = token
-                self.i = self.i + 1
+                self.operative_verb = token[0]
                 break
 
             self.i = self.i + 1
+
         print self.i
 
-        for token in input_tokens[self.i:]:
+        # Check for the noun which is the target of the operative verb
+        for token in input_tokens:
             if reg_noun.search(token[1]) is not None:
                 print "Matched noun token: " + token.__str__()
-                self.target_noun = token
+                self.target_noun = token[0]
                 break
 
-        # If a match for the operative verb and target noun is found
+        # If no verb is found, assume the first or second word are verbs
+        # This circumvents incorrect tagging
+        if self.operative_verb is None:
+            # If the first word is not a personal preposition, assume that it is a verb
+            if reg_prep.search((input_tokens[0])[1]) is None:
+                self.operative_verb = (input_tokens[0])[0]
+            else:
+                # Otherwise, assume the second word is a verb
+                self.operative_verb = (input_tokens[1])[0]
+
+        """
+        Note on Syntax:
+
+            input_tokens is a list of tuples
+            In order to access this, we need to access the list element containing the tuple we want. Hence, input_tokens[0]
+            Once this is done, we must access the element of the necessary tuple. Hence, (input_tokens[0])[1]
+            This accesses the tuple and the element we need.
+            In this case it is the first element of the tuple contains the word, while the second contains its tag
+        """
+
+        print(self.operative_verb)
+        print(self.target_noun)
+
+        # If a verb and accompanying noun were found return them as a tuple
         if self.operative_verb is not None and self.target_noun is not None:
             return self.operative_verb, self.target_noun
+
+    def eval_frame(self, entity, verb_in):
+        self.reg_string = verb_in + '.v' # Create necessary verb suffix
+        self.reg_frame_verb = re.compile(r'(?)' + self.reg_string) # Create regex
+        self.frame_ref = fn.lus(self.reg_frame_verb) # Get reference to relevant verb frame using verb as lexical unit
+
+        if self.frame_ref is not None:
+            print(self.frame_ref)
+
+        self.frame = fn.frame(self.frame_ref.id)
+        print(self.frame.ID, self.frame.name, self.frame.definition)
