@@ -57,7 +57,19 @@ class TextSystem(System):
             if "text" in self.entityList.get(ents).componentList:
                 for comps in self.entityList.get(ents).componentList:
                     for strings in self.entityList.get(ents).componentList.get(comps):
-                        self.get_pos(strings.input_string)
+                        if strings.input_string is not None:
+                            print "Input exists"
+                            strings.pos_tags = self.get_pos(strings.input_string)
+                            print(strings.pos_tags)
+                            self.temp = self.interperate(strings.pos_tags)
+                            print(self.temp)
+                            strings.action = self.temp[0]
+                            print(strings.action)
+                            strings.action_target = self.temp[1]
+                            print(strings.action_target)
+                        else:
+                            print "Input not found"
+
 
     def get_pos(self, input_text):
         """ Accepts a string as input

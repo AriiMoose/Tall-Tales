@@ -15,4 +15,5 @@ class KnowledgeComponent(Component):
         self.krb_dict = {}
         self.kb = None
         self.current_rule = None
+        self.param = None
         self.eval_result = None

@@ -55,7 +55,8 @@ class SceneOne(Scene):
                 print(cls.test_eval)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
-                cls.knowledgeSys.evaluate('test', cls.test_eval[0], cls.test_eval[1] )
+                cls.knowledgeSys.evaluate('test', cls.test_eval[0], cls.test_eval[1])
+
         pygame.display.flip()
 
     @classmethod

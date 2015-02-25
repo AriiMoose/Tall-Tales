@@ -88,7 +88,7 @@ class Scene:
 
         # Checks for events occurring within the scene and responds to them
         for event in cls.events:
-            if event.type == pygame.QUIT:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 print "QUIT event received"
                 cls.gameView.running = False
 

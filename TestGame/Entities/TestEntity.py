@@ -1,7 +1,5 @@
 __author__ = 'Andrew'
 
-#!/usr/bin/env python
-
 from Engine.Entity import Entity
 from Engine.Components.TextComponent import TextComponent
 

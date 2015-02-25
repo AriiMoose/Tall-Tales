@@ -21,5 +21,5 @@ class TextComponent(Component):
         self.input_string = None
         self.output_string = None
         self.action = None
+        self.action_target = None
         self.pos_tags = []
-        self.frame_params = []

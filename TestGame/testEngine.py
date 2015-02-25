@@ -6,13 +6,13 @@ __maintainer__ = 'Andrew Tully'
 __email__ = 'ariimoose@gmail.com'
 __status__ = 'Development'
 
-#!/usr/bin/env python
 from Engine.Game import Game
 from Scenes import firstScene
+from Scenes import demoScene
 
 class Test:
         game = Game('Test Game', 500, 500)
 
-        game.set_active_scene(firstScene.SceneOne)
+        game.set_active_scene(demoScene.DemoScene)
         print "Running game"
         game.run()

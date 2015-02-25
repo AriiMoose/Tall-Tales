@@ -26,6 +26,18 @@ class KnowledgeSystem(System):
         """
         self.engine = knowledge_engine.engine(loc)
 
+    def update(self):
+        pass
+
+    def access_components(self):
+        # Access the knowledge component of an entity
+
+        for ents in self.entityList:
+            if "knowledge" in self.entityList.get(ents).componentList:
+                for comps in self.entityList.get(ents).componentList:
+                    if comps.kb is not None and comps.current_rule is not None:
+                        comps.eval_result = self.evaluate(comps.kb, comps.current_rule, comps.param)
+
     def create_kb(self):
         pass
 
@@ -66,6 +78,8 @@ class KnowledgeSystem(System):
     def update(self):
 
         # Update each entity based on it's priority
+        print("updating")
+
         for key in sorted(self.entityList):
             if(key.current_rule is not None):
                 key.eval_result = self.evaluate(key.kb, key.current_rule)
@@ -79,6 +93,10 @@ class KnowledgeSystem(System):
             actor: Entity performing the action. Defaults to the player
             subject: The target of the action
         """
+
+        # To expand the subject arg, refer to:
+        # http://stackoverflow.com/questions/6913084/how-to-split-list-and-pass-them-as-separate-parameter
+        # Useful with FrameNet API
 
         # Construct argument string for testing the rule
         self.arg_string = kb + "." + rule
