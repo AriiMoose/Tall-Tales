@@ -1,0 +1,6 @@
+# Question base for the chest entity
+
+usage($rule)
+    What do you wish to do?
+    ---
+    $rule = string

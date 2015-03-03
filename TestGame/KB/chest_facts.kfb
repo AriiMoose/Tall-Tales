@@ -1,0 +1,4 @@
+# Fact base for chest entity
+
+closed(True)
+containsKey(True)

@@ -13,7 +13,7 @@ __status__ = 'Development'
 
 """
 from Engine.System import System
-from pyke import knowledge_engine
+from pyke import knowledge_engine, krb_traceback
 
 class KnowledgeSystem(System):
 
@@ -25,9 +25,9 @@ class KnowledgeSystem(System):
                 A package or directory may be passed
         """
         self.engine = knowledge_engine.engine(loc)
+        self.currentKB = None
 
-    def update(self):
-        pass
+        super(KnowledgeSystem, self).__init__(type)
 
     def access_components(self):
         # Access the knowledge component of an entity
@@ -35,8 +35,10 @@ class KnowledgeSystem(System):
         for ents in self.entityList:
             if "knowledge" in self.entityList.get(ents).componentList:
                 for comps in self.entityList.get(ents).componentList:
-                    if comps.kb is not None and comps.current_rule is not None:
-                        comps.eval_result = self.evaluate(comps.kb, comps.current_rule, comps.param)
+                    for rules in self.entityList.get(ents).componentList:
+                        if rules.kb is not None and comps.current_rule is not None:
+                            print("Evaluating...")
+                            comps.eval_result = self.evaluate(comps.kb, comps.current_rule, comps.param)
 
     def create_kb(self):
         pass
@@ -99,7 +101,22 @@ class KnowledgeSystem(System):
         # Useful with FrameNet API
 
         # Construct argument string for testing the rule
+
+        self.engine.reset()
         self.arg_string = kb + "." + rule
-        print(self.arg_string)
-        print(subject)
-        print(self.engine.prove_1_goal(self.arg_string + "(" + subject + ")"))
+
+        print("KB: " + kb)
+        print("arg_string: " + self.arg_string)
+        print("Subject: " + subject)
+        print("Current KB: " + str(self.currentKB))
+        print("New KB: " + (kb))
+
+
+        try:
+            self.engine.activate(kb)
+            if self.engine.prove_1_goal(self.arg_string + "("")"):
+                return True
+
+        except StandardError:
+            krb_traceback.print_exc()
+            return False

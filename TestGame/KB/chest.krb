@@ -1,0 +1,18 @@
+# Rule base for chest entity
+
+#open_chest
+ #   foreach
+  #      $status = ('False')
+   #     chest_facts.closed($status)
+    #assert
+     #   python
+      #      print "You open the chest"
+
+open
+    use open()
+    when
+        #chest_questions.usage(open)
+        chest_facts.closed(True)
+        python
+            from Scenes import demoScene
+            demoScene.DemoScene.chest_open = True

@@ -2,3 +2,4 @@
 
 locked(True)
 hasKey(False)
+closed(True)

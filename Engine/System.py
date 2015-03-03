@@ -14,22 +14,23 @@ __status__ = 'Development'
             * Events should be passed from the scene to the system
             * Scene can call check_entity() to distribute entities among systems
 """
-#!/usr/bin/env python
+
 class System(object):
 
     def __init__(self, system_type):
         self.entityList = {}    # Entities stored as dictionary. The key is the entity, the value is the priority
         self.priorityCounter = 0
 
-    def check_entity(self, entity, type):
+    def check_entity(self, entity, ent_type):
         """ Used to check if an entity belongs to the system
             Does this by querying the entity for what components it has
 
         Args:
             entity: An instance of the Entity class
         """
-        if entity.does_contain(type) is True:
-            self.entityList[self.priorityCounter + 1] = entity
+        if entity.does_contain(ent_type) is True:
+            self.entityList[self.priorityCounter] = entity
+            self.priorityCounter = self.priorityCounter + 1
 
         else:
             print "Check failed"
@@ -37,5 +38,4 @@ class System(object):
     def update(self):
         """ Contains all logic for the system
             Should loop through reach entity and update based on priority
-
         """
