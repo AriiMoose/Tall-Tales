@@ -1,7 +1,0 @@
-# Rule base for door entity
-
-open
-    foreach
-        door.hasKey(True)
-    assert
-        door.closed(False)

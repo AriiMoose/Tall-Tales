@@ -1,8 +1,0 @@
-# Rule base for key entity
-
-take
-    foreach
-        chest.closed(False)
-        key.inChest(True)
-    assert
-        key.inChest(False)

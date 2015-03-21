@@ -1,5 +1,0 @@
-# Fact base for a door entity
-
-locked(True)
-hasKey(False)
-closed(True)
