@@ -1,0 +1,51 @@
+# Rules for key entity
+
+take
+    use take()
+    when
+        key_facts.inChest(True)
+        python
+            from Scenes import demoScene
+
+            demoScene.DemoScene.demo_player.textComp.output_string = "You cannot take the key"
+
+            if demoScene.DemoScene.has_key is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You already have the key"
+
+            elif demoScene.DemoScene.has_key is False and demoScene.DemoScene.key_present is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You take the key"
+                demoScene.DemoScene.has_key = True
+
+eat
+    use eat()
+    when
+        python
+            from Scenes import demoScene
+
+            if demoScene.DemoScene.has_key is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You eat the key"
+                demoScene.DemoScene.has_key = False
+                demoScene.DemoScene.key_present = False
+                demoScene.DemoScene.key_eaten = True
+poop
+    use poop()
+    when
+        python
+            from Scenes import demoScene
+
+            if demoScene.DemoScene.key_eaten and demoScene.DemoScene.key_eaten is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You poop out the key"
+                demoScene.DemoScene.has_key = False
+                demoScene.DemoScene.key_present = True
+                demoScene.DemoScene.key_eaten = False
+drop
+    use drop()
+    when
+        python
+            from Scenes import demoScene
+
+            if demoScene.DemoScene.has_key is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You drop the key on the floor"
+                demoScene.DemoScene.has_key = False
+            else:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You don't have the key"

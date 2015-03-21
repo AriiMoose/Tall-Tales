@@ -9,9 +9,9 @@ __status__ = 'Development'
 """ Desc:   * Contains the attributes which are required for text processing
             * Managed and updated by the TextSystem
 
-    Usage:
+    Usage:  * Attributes within an entity's component should be set when intereacting with the relevant system
 """
-#!/usr/bin/env python
+
 from Engine.Component import Component
 
 class TextComponent(Component):

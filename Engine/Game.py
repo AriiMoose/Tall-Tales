@@ -15,7 +15,6 @@ __status__ = 'Development'
             This loads a default canvas and begins running the main game loop until the game is closed.
 """
 
-#!/usr/bin/env python
 import pygame
 import Scene
 import sys
@@ -54,7 +53,7 @@ class Game:
         self.background.fill((250, 250, 250))
 
         # Display text
-        self.font = pygame.font.Font(None, 36)
+        self.font = pygame.font.Font(None, 25)
         self.text = self.font.render("Hello world", 1, (10, 10, 10))
         self.textpos = self.text.get_rect()
         self.textpos.centerx = self.background.get_rect().centerx

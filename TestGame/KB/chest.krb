@@ -1,18 +1,37 @@
 # Rule base for chest entity
 
-#open_chest
- #   foreach
-  #      $status = ('False')
-   #     chest_facts.closed($status)
-    #assert
-     #   python
-      #      print "You open the chest"
-
 open
     use open()
     when
-        #chest_questions.usage(open)
         chest_facts.closed(True)
         python
             from Scenes import demoScene
-            demoScene.DemoScene.chest_open = True
+
+            if demoScene.DemoScene.chest_open is True and demoScene.DemoScene.has_key is False:
+                demoScene.DemoScene.demo_player.textComp.output_string = "The chest is already open. It contains a key"
+
+            elif demoScene.DemoScene.chest_open is True and demoScene.DemoScene.has_key is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "The chest is already open. It is empty"
+
+            else:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You open the chest. Inside, you find a key"
+
+                demoScene.DemoScene.add_entities(demoScene.DemoScene.demo_key)
+                demoScene.DemoScene.key_present = True
+                demoScene.DemoScene.chest_open = True
+
+kick
+    use kick()
+    when
+        python
+            from Scenes import demoScene
+            if demoScene.DemoScene.chest_open is True and demoScene.DemoScene.has_key is False:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You kick the chest. The key rattles around inside"
+
+
+            elif demoScene.DemoScene.chest_open is True and demoScene.DemoScene.has_key is True:
+                    demoScene.DemoScene.demo_player.textComp.output_string = "You kick the empty chest"
+
+            else:
+                    demoScene.DemoScene.demo_player.textComp.output_string = "You kick the chest. Something rattles around inside it"
+

@@ -1,7 +1,9 @@
 from Engine.Scene import *
 from Engine.Systems import TextSystem
 from Engine.Systems import KnowledgeSystem
+from nltk.corpus import wordnet as wn
 import Engine.InputBox
+import re
 
 from TestGame.Entities.Chest import Chest
 from TestGame.Entities.Door import Door
@@ -28,8 +30,6 @@ class DemoScene(Scene):
         # Add entities to the scene
         cls.add_initial_entities([cls.demo_chest, cls.demo_door, cls.demo_key, cls.demo_player])
 
-        print(cls.sceneEntities)
-
         # Check which entities belong to what systems
         for ents in DemoScene.sceneEntities:
             print(cls.demoScene_textSystem.priorityCounter)
@@ -43,9 +43,17 @@ class DemoScene(Scene):
         print(cls.demoScene_knowledgeSystem.entityList)
 
         # Scene-specific attributes
+        # Attribute flags
         cls.chest_open = False
         cls.has_key = False
+        cls.key_present = False
+        cls.key_eaten = False
         cls.door_open = False
+
+        cls.intro_string = "You find yourself in a room with a door and a chest. Press Enter to input an action"
+        cls.gameView.text = cls.gameView.font.render(cls.intro_string,
+                                                            1,
+                                                            (0, 0, 0))
 
     @classmethod
     def update(cls):
@@ -53,6 +61,8 @@ class DemoScene(Scene):
 
         for event in cls.events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                print(cls.chest_open)
+
                 # Take user input
                 cls.demo_player.textComp.input_string = Engine.InputBox.ask(cls.gameView.screen, "Input: ")
 
@@ -69,8 +79,13 @@ class DemoScene(Scene):
                 - The Knowledge System then evaluates these values
                 """
 
-                cls.input_eval = cls.demoScene_textSystem.interperate(cls.demo_player.textComp.pos_tags)
+                cls.input_eval = cls.demoScene_textSystem.interpret(cls.demo_player.textComp.pos_tags)
+
+                print("Input eval: " + str(cls.input_eval))
+
                 cls.demo_player.textComp.action = cls.input_eval[0]
+                print("Player Action: " + str(cls.demo_player.textComp.action))
+
                 cls.demo_player.textComp.action_target = cls.input_eval[1]
 
                 cls.demo_player.knowledgeComp.current_rule = cls.demo_player.textComp.action
@@ -81,28 +96,51 @@ class DemoScene(Scene):
 
                 print("Eval Results: " + str(cls.demo_player.knowledgeComp.eval_result))
 
-                if cls.demo_player.knowledgeComp.eval_result:
-                    cls.gameView.text = cls.gameView.font.render("You successfully " + cls.demo_player.textComp.input_string,
+                # If the evaluation fails, print a default error message
+                if not cls.demo_player.knowledgeComp.eval_result:
+                    synsets = cls.demoScene_textSystem.checkInput(cls.demo_player.textComp.action)
+
+                    for syn in synsets:
+                        cls.demo_player.knowledgeComp.eval_result = cls.demoScene_knowledgeSystem.evaluate(cls.demo_player.knowledgeComp.param,
+                                                                                                           syn,
+                                                                                                           cls.demo_player.knowledgeComp.param)
+
+                    if cls.demo_player.knowledgeComp.eval_result is False and cls.demo_player.textComp.action_target is not "":
+                        cls.demo_player.textComp.output_string = ("You attempt to " +
+                                                                    cls.demo_player.textComp.action + " the " +
+                                                                    cls.demo_player.textComp.action_target +
+                                                                    ". Nothing happens")
+
+                    elif cls.demo_player.knowledgeComp.eval_result is False and cls.demo_player.textComp.action_target is "":
+                        cls.demo_player.textComp.output_string = ("What do you want to " +
+                                                                    cls.demo_player.textComp.action + "?")
+
+                cls.gameView.text = cls.gameView.font.render(cls.demo_player.textComp.output_string,
                                                             1,
                                                             (0, 0, 0))
-                else:
-                    cls.gameView.text = cls.gameView.font.render("You unsuccessfully " + cls.demo_player.textComp.input_string,
-                                                                 1,
-                                                                (0,0,0))
-                cls.gameView.background.fill((250, 250, 250))
+
+
+                """
+                TODO:   - Basic animation
+                """
+                if cls.door_open is True:
+                    # Draw open door
+                    pass
+
+                if cls.chest_open is True:
+                    # Draw open chest
+                    pass
+
+                cls.gameView.background.blit(cls.background, (0,0))
+
                 cls.gameView.background.blit(cls.gameView.text, (50,100))
                 cls.gameView.screen.blit(cls.gameView.background, (0, 0))
                 pygame.display.flip()
 
-        #print(cls.chest_open)
+                print(cls.chest_open)
 
     @classmethod
-    def draw(self):
-        pass
-
-    @classmethod
-    def checkInput(cls):
-        """ - Recursive function
-            - Checks user input, if  that fails, check synonyms
-            - If there is still no match, return false
-        """
+    def draw(cls):
+        cls.background = pygame.image.load('./TestGame/Backgrounds/scene.png')
+        cls.gameView.background.blit(cls.background, (0, 0))
+        cls.gameView.background.blit(cls.gameView.text, (50,100))

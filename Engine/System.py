@@ -24,6 +24,8 @@ class System(object):
     def check_entity(self, entity, ent_type):
         """ Used to check if an entity belongs to the system
             Does this by querying the entity for what components it has
+            If the entity contains the matching type then it is added with a key that denotes it's priority
+            By default, priority is assigned in the order the entities are checked
 
         Args:
             entity: An instance of the Entity class

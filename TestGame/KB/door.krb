@@ -1,0 +1,28 @@
+# Rule base for door entity
+
+open
+    use open()
+    when
+        door_facts.closed(True)
+        python
+            from Scenes import demoScene
+            if demoScene.DemoScene.door_open is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "The door is already open"
+
+            elif demoScene.DemoScene.door_open is False and demoScene.DemoScene.has_key is False:
+                demoScene.DemoScene.demo_player.textComp.output_string = "The door is locked"
+
+            elif demoScene.DemoScene.door_open is False and demoScene.DemoScene.has_key is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You open the door"
+
+kick
+    use open()
+    when
+        python
+            from Scenes import demoScene
+            if demoScene.DemoScene.door_open is True:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You kick the door closed"
+                demoScene.DemoScene.door_open = False
+
+            elif demoScene.DemoScene.door_open is False and demoScene.DemoScene.has_key is False:
+                demoScene.DemoScene.demo_player.textComp.output_string = "You kick the door. It's locked shut"

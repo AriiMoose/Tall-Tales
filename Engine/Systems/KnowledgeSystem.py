@@ -27,6 +27,7 @@ class KnowledgeSystem(System):
         self.engine = knowledge_engine.engine(loc)
         self.currentKB = None
 
+        self.type = "knowledge"
         super(KnowledgeSystem, self).__init__(type)
 
     def access_components(self):
@@ -57,35 +58,6 @@ class KnowledgeSystem(System):
         else:
             print "Entity does not contain a Knowledge Component"
 
-    def add_fact(self, kb, fact, actor, subject=""):
-        """ Add new fact to during runtime
-
-        Args:
-            kb: The knowledge base receiving the new fact
-            fact: The fact being added
-            actor: The entity performing the action
-            subject: The target of the action. Defaults to empty
-        """
-
-        # If there is no subject, do not add subject
-        if subject is "":
-            self.engine.assert_(kb, fact, actor)
-
-        else:
-            self.engine.assert_(kb, fact, (actor, subject))
-
-    def add_rule(self):
-        pass
-
-    def update(self):
-
-        # Update each entity based on it's priority
-        print("updating")
-
-        for key in sorted(self.entityList):
-            if(key.current_rule is not None):
-                key.eval_result = self.evaluate(key.kb, key.current_rule)
-
     def evaluate(self, kb, rule, subject):
         """ Evaluates a rule or fact in the knowledge base
 
@@ -103,20 +75,21 @@ class KnowledgeSystem(System):
         # Construct argument string for testing the rule
 
         self.engine.reset()
-        self.arg_string = kb + "." + rule
+        if kb is not None:
+            self.arg_string = kb + "." + rule
 
-        print("KB: " + kb)
-        print("arg_string: " + self.arg_string)
-        print("Subject: " + subject)
-        print("Current KB: " + str(self.currentKB))
-        print("New KB: " + (kb))
+            print("KB: " + kb)
+            print("arg_string: " + self.arg_string)
+            print("Subject: " + subject)
+            print("Current KB: " + str(self.currentKB))
+            print("New KB: " + (kb))
 
 
-        try:
-            self.engine.activate(kb)
-            if self.engine.prove_1_goal(self.arg_string + "("")"):
-                return True
+            try:
+                self.engine.activate(kb)
+                if self.engine.prove_1_goal(self.arg_string + "("")"):
+                    return True
 
-        except StandardError:
-            krb_traceback.print_exc()
-            return False
+            except StandardError:
+                krb_traceback.print_exc()
+                return False

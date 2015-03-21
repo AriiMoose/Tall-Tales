@@ -15,13 +15,12 @@ __status__ = 'Development'
                 Allows for multiple components of same type.
                 Components indexed by their type
 """
-#!/usr/bin/env python
 
 from collections import defaultdict
 
 class Entity:
 
-    componentList = defaultdict(list)
+    componentDict = defaultdict(list)
 
 
     def __init__(self):
@@ -37,11 +36,11 @@ class Entity:
             components: Array of components to be added
         """
         try:
-            self.componentList[key].append(components)
+            self.componentDict[key].append(components)
         except ValueError:
             print "Could not add components to entity" + self.__name__
 
-    def remove_components(self, key, components):
+    def remove_components(self, key, components=[]):
         """ Removes the specified components at the given index
 
         Args:
@@ -49,10 +48,10 @@ class Entity:
             components: Components to be removed
         """
 
-        if key in self.componentList:
-            for components in self.componentList:
+        if key in self.componentDict:
+            for components in self.componentDict[key]:
                 try:
-                    del self.componentList[components]
+                    self.componentDict.pop(key, None)
                 except ValueError:
                     print "Could not remove component"
 
@@ -60,16 +59,16 @@ class Entity:
             print "Key does not exist"
 
     def does_contain(self, key):
-        """ Checks if the entity contains a tpye of component
+        """ Checks if the entity contains a type of component
             Component type is indicated by the key
 
         Args:
-            key: Index in the componentList which indicates the type stored
+            key: Index in the componentDict which indicates the type stored
         """
         print "Iterating over components..."
-        for key in self.componentList:
+        for key in self.componentDict:
             print "Checking keys..."
-            if key in self.componentList:
+            if key in self.componentDict:
                 return True
 
             else:

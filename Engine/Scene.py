@@ -10,7 +10,7 @@ __status__ = 'Development'
             contain a list of systems and entities which belong to them
 
     Usage:  Subclass the scene to create a new scene
-            In the subclass override the check_transition() method to define the parameters for transitioning between scenes
+            In the subclass override the check_transition() method to define the conditions for transitioning between scenes
             Call the add_systems() and add_entities() methods to initialise the relative lists
 
 """
@@ -41,7 +41,7 @@ class Scene:
 
 
     @classmethod
-    def add_systems(cls, systems=[], *args):
+    def add_systems(cls, systems=[]):
         """ Adds systems to the scene
 
         Args:
@@ -83,8 +83,8 @@ class Scene:
             None
         """
 
-        for x in cls.sceneSystems:
-            x.update()
+        for sys in cls.sceneSystems:
+            sys.update()
 
         cls.events = pygame.event.get()
 

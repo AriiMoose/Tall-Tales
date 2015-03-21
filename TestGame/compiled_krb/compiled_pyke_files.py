@@ -13,22 +13,20 @@ except NameError:
 
 def get_target_pkg():
     return target_pkg.target_pkg(__name__, __file__, pyke_version, loader, {
-         ('TestGame', 'KB/', 'door.kfb'):
-           [1424879262.251925, 'door.fbc'],
-         ('TestGame', 'KB/', 'key.kfb'):
-           [1424880542.069556, 'key.fbc'],
-         ('TestGame', 'KB/', 'key_rules.krb'):
-           [1424880542.074862, 'key_rules_fc.py'],
-         ('TestGame', 'KB/', 'test.kfb'):
-           [1424366490.914166, 'test.fbc'],
-         ('TestGame', 'KB/', 'chest_questions.kqb'):
-           [1425055035.363006, 'chest_questions.qbc'],
+         ('TestGame', 'KB/', 'key_facts.kfb'):
+           [1425402087.97809, 'key_facts.fbc'],
+         ('TestGame', 'KB/', 'chest.krb'):
+           [1426785130.839778, 'chest_bc.py'],
+         ('TestGame', 'KB/', 'door.krb'):
+           [1425984573.790016, 'door_bc.py'],
+         ('TestGame', 'KB/', 'key.krb'):
+           [1425992351.329943, 'key_bc.py'],
          ('TestGame', 'KB/', 'chest_facts.kfb'):
            [1425064646.384312, 'chest_facts.fbc'],
-         ('TestGame', 'KB/', 'door_rules.krb'):
-           [1425049979.659324, 'door_rules_fc.py'],
-         ('TestGame', 'KB/', 'chest.krb'):
-           [1425130601.642139, 'chest_bc.py'],
+         ('TestGame', 'KB/', 'door_facts.kfb'):
+           [1425400730.035526, 'door_facts.fbc'],
+         ('TestGame', 'KB/', 'test.kfb'):
+           [1424366490.914166, 'test.fbc'],
         },
         compiler_version)
 

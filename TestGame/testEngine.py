@@ -7,11 +7,10 @@ __email__ = 'ariimoose@gmail.com'
 __status__ = 'Development'
 
 from Engine.Game import Game
-from Scenes import firstScene
 from Scenes import demoScene
 
 class Test:
-        game = Game('Test Game', 500, 500)
+        game = Game('Test Game', 800, 600)
 
         game.set_active_scene(demoScene.DemoScene)
         print "Running game"

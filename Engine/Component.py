@@ -13,7 +13,7 @@ __status__ = 'Development'
             This subclass can be further subclassed to provide special-case components
 
 """
-#!/usr/bin/env python
+
 class Component:
 
     type = ""

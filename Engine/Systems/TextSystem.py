@@ -9,14 +9,14 @@ __status__ = 'Development'
 """ Desc:   * Subclass of the System abstract class
             * Defines logic for the text management and natural language processing
 
-    Usage:  * Text System is added to relevant scene
+    Usage:  * Text System is subclassed and added to relevant scene
             * Text should be tagged within the event queue
 """
 
 from Engine.System import System
 import nltk
 from nltk.corpus import brown
-from nltk.corpus import framenet as fn
+from nltk.corpus import wordnet as wn
 import re
 
 class TextSystem(System):
@@ -45,11 +45,7 @@ class TextSystem(System):
         super(TextSystem, self).__init__(type)
 
     def update(self):
-        """
-        """
-        #self.access_components()
-        #self.tagged_string = self.get_pos("I open the door")
-        #self.interperate(self.tagged_string)
+        pass
 
     def access_components(self):
         # Access the strings within an entity's text component
@@ -61,11 +57,12 @@ class TextSystem(System):
                             print "Input exists"
                             strings.pos_tags = self.get_pos(strings.input_string)
                             print(strings.pos_tags)
-                            self.temp = self.interperate(strings.pos_tags)
+                            self.temp = self.interpret(strings.pos_tags)
                             print(self.temp)
                             strings.action = self.temp[0]
                             print(strings.action)
                             strings.action_target = self.temp[1]
+
                             print(strings.action_target)
                         else:
                             print "Input not found"
@@ -94,7 +91,7 @@ class TextSystem(System):
             print "" + self.tagged_output.__str__()
             return self.tagged_output
 
-    def interperate(self, input_tokens):
+    def interpret(self, input_tokens):
         """ Executes the text recognition algorithm on tagged tokens
             Checks the tag for each token until it finds a verb
             Assumes the first verb in the sentence is the operative verb
@@ -115,57 +112,84 @@ class TextSystem(System):
 
         # Check for operative verb
         # If the tag of the token tuple matches with the appropriate regex then record it
-        for token in input_tokens:
-            if reg_verb.search(token[1]) is not None:
-                print "Matched verb token: " + token.__str__()
-                self.operative_verb = token[0]
-                break
+        if input_tokens is not None:
+            for token in input_tokens:
+                if reg_verb.search(token[1]) is not None:
+                    print "Matched verb token: " + token.__str__()
+                    self.operative_verb = token[0]
+                    """
+                    if reg_in.search((input_tokens.index(token) + 1)[1]) is not None:
+                        current_verb = self.operative_verb
+                        self.operative_verb = current_verb + "_" + (input_tokens.index(token) + 1)
+                        print("Op. Verb: " + self.operative_verb)
+                    """
+                    break
 
-            self.i = self.i + 1
+            # If no verb is found, assume the first or second word are verbs
+            # This circumvents incorrect tagging
+            if self.operative_verb is None:
+                # If the first word is not a personal preposition, assume that it is a verb
+                # input_tokens[0] is the first token in the list of input_tokens
+                # (input_tokens[0])[1] is the second part of the tuple at input_tokens[0]
+                if reg_prep.search((input_tokens[0])[1]) is None:
+                    self.operative_verb = (input_tokens[0])[0]
+                else:
+                    # Otherwise, assume the second word is a verb
+                    self.operative_verb = (input_tokens[1])[0]
 
-        print self.i
+            # Check for the noun which is the target of the operative verb
+            for token in input_tokens:
+                if reg_noun.search(token[1]) is not None and token[0] is not self.operative_verb:
+                    print "Matched noun token: " + token.__str__()
+                    self.target_noun = token[0]
+            """
+            Note on Syntax:
 
-        # Check for the noun which is the target of the operative verb
-        for token in input_tokens:
-            if reg_noun.search(token[1]) is not None:
-                print "Matched noun token: " + token.__str__()
-                self.target_noun = token[0]
-                break
+                input_tokens is a list of tuples
+                In order to access this, we need to access the list element containing the tuple we want. Hence, input_tokens[0]
+                Once this is done, we must access the element of the necessary tuple. Hence, (input_tokens[0])[1]
+                This accesses the tuple and the element we need.
+                In this case it is the first element of the tuple contains the word, while the second contains its tag
+            """
 
-        # If no verb is found, assume the first or second word are verbs
-        # This circumvents incorrect tagging
-        if self.operative_verb is None:
-            # If the first word is not a personal preposition, assume that it is a verb
-            if reg_prep.search((input_tokens[0])[1]) is None:
-                self.operative_verb = (input_tokens[0])[0]
-            else:
-                # Otherwise, assume the second word is a verb
-                self.operative_verb = (input_tokens[1])[0]
+            print(self.operative_verb)
+            print(self.target_noun)
 
+            # If a verb and accompanying noun were found return them as a tuple
+            if self.operative_verb is not None and self.target_noun is not None:
+                result_set = [self.operative_verb, self.target_noun]
+                return result_set
+
+            # If a verb was found, but no noun was found, return a list with a blank noun
+            elif self.operative_verb is not None and self.target_noun is None:
+                result_set = [self.operative_verb, ""]
+                return result_set
+
+        else:
+            result_set = ["", ""]
+            return result_set
+
+    def checkInput(cls, action):
+        """ - Recursive function
+            - Checks user input, if  that fails, check synonyms
+            - If there is still no match, return false
         """
-        Note on Syntax:
 
-            input_tokens is a list of tuples
-            In order to access this, we need to access the list element containing the tuple we want. Hence, input_tokens[0]
-            Once this is done, we must access the element of the necessary tuple. Hence, (input_tokens[0])[1]
-            This accesses the tuple and the element we need.
-            In this case it is the first element of the tuple contains the word, while the second contains its tag
-        """
+        syn_list = []
+        out_list = []
 
-        print(self.operative_verb)
-        print(self.target_noun)
+        for synset in wn.synsets(action, pos=wn.VERB):
+            for lemma in synset.lemmas():
+                found = lemma.name()
+                print(found)
 
-        # If a verb and accompanying noun were found return them as a tuple
-        if self.operative_verb is not None and self.target_noun is not None:
-            return self.operative_verb, self.target_noun
+                syn_list.append(str(found))
+                print(syn_list)
 
-    def eval_frame(self, entity, verb_in):
-        self.reg_string = verb_in + '.v' # Create necessary verb suffix
-        self.reg_frame_verb = re.compile(r'(?)' + self.reg_string) # Create regex
-        self.frame_ref = fn.lus(self.reg_frame_verb) # Get reference to relevant verb frame using verb as lexical unit
+                for syn in syn_list:
+                    if syn not in out_list:
+                        out_list.append(syn)
 
-        if self.frame_ref is not None:
-            print(self.frame_ref)
+                print(out_list)
 
-        self.frame = fn.frame(self.frame_ref.id)
-        print(self.frame.ID, self.frame.name, self.frame.definition)
+        return out_list
